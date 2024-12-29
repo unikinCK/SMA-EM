@@ -105,43 +105,32 @@ except Exception as e:
     print(f"Could not connect to multicast group: {e}")
     sys.exit(1)
 
-# set up mqtt msgs
-def send_units_to_mqtt():
-    """Publish SMA units to a separate topic."""
-    try:
-        topic = f"{MQTT_TOPIC}/units"
-        #mqtt_client.publish(topic, json.dumps(sma_units))
-        print(f"Units: {topic} -> {json.dumps(sma_units)}")
-    except Exception as e:
-        print(f"Failed to send units to MQTT broker: {e}")
-
-# Store units to prevent repeated publishing
-published_units = {}
-
 def send_to_mqtt(data):
     try:
         for key, value in data.items():
-            if key.endswith("unit"):
-                # Publish units only once
-                if key not in published_units:
-                    topic = f"{MQTT_TOPIC}/{data['serial']}/units/{key}"
-                    mqtt_client.publish(topic, value)
-                    published_units[key] = value  # Mark unit as published
-                    #print(f"Unit sent to MQTT broker: {topic} -> {value}")
-            else:
-                # Publish all non-unit data normally
-                topic = f"{MQTT_TOPIC}/{data['serial']}/{key}"
-                mqtt_client.publish(topic, value)
-                #print(f"Data sent to MQTT broker: {topic} -> {value}")
+            # Publish all non-unit data normally
+            topic = f"{MQTT_TOPIC}/{data['serial']}/{key}"
+            mqtt_client.publish(topic, value)
+            #print(f"Data sent to MQTT broker: {topic} -> {value}")
     except Exception as e:
         print(f"Failed to send data to MQTT broker: {e}")
-
 
 
 # Publish units once before entering the main loop
 topic = f"{MQTT_TOPIC}/Status/"
 mqtt_client.publish(topic, "connected")
-send_units_to_mqtt()
+
+#create samplefile
+datagram = sock.recv(608)
+decoded_data = decode_speedwire(datagram)
+# Filepath to save JSON data
+file_path = "sampledata.json"
+# Write JSON data to disk
+with open(file_path, "w") as file:
+    json.dump(decoded_data, file, indent=4)  # `indent` for pretty formatting
+
+#publish autodiscover
+import haautodiscover
 
 # Main loop to process datagrams
 while True:

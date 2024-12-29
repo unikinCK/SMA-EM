@@ -1,110 +1,29 @@
-# SMA-EM
+SMA Energy Meter Decoder and MQTT Publisher
 
-a detailed german description could be found here
-https://www.unifox.at/software/sma-em-daemon/
+This application decodes SMA Energy Meter data and publishes it to an MQTT broker, allowing seamless integration with Home Assistant or other IoT platforms. It supports MQTT discovery and is designed to provide accurate energy data for monitoring and analytics.
 
-translated by google 
-https://translate.google.com/translate?sl=de&tl=en&u=https://www.unifox.at/software/sma-em-daemon/
+Features
 
+Decodes SMA Energy Meter data packets.
 
-## SMA Energymeter / Homemanager measurement
-sma-em-measurement.py: Python3 loop display SMA Energymeter measurement values
+Publishes decoded data to an MQTT broker.
 
-sma-daemon.py: Python3 daemon writing consume and supply values to /run/shm/em-[serial]-[value]
+Supports MQTT discovery for automatic integration with Home Assistant.
 
-```
-# HINT #
-Sma homemanager version 2.3.4R added 8 Byte of measurement data.
-This version trys to detect the measurement values on obis ids, so it should be save if new values were added or removed.
-```
+Configurable via environment variables.
 
-## Requirements
-python3
-sys
-time
-configparser (SafeConfigParser)
-signal
+Outputs energy metrics such as power consumption, supply, and energy counters.
 
-some features require additional python modules
-features/README.md should give an overview of maintained features.
-features-outdated/README.md: other features untested because I do not have the appropriate hardware / software could be found in features-outdated.
+Prerequisites
 
+Python 3.8+
 
-## Configuration
-create a config file in /etc/smaemd/config<br>
-Use UTF-8 encoded configfile<br>
-Example:
-```
-[SMA-EM]
-# serials of sma-ems the daemon should take notice
-# seperated by space
-serials=30028xxxxx
-# features could filter serials to, but wouldn't see serials if these serials was not defines in SMA-EM serials
-# list of features to load/run
-features=simplefswriter sample
+Required Python Libraries:
 
-[DAEMON]
-pidfile=/run/smaemd.pid
-# listen on an interface with the given ip
-# use 0.0.0.0 for any interface
-ipbind=192.168.8.15
-# multicast ip and port of sma-datagrams
-# defaults
-mcastgrp=239.12.255.254
-mcastport=9522
+paho-mqtt
 
-# each feature/plugin has its own section
-# called FEATURE-[featurename]
-# the feature section is required if a feature is listed in [SMA-EM]features
+json
 
-[FEATURE-simplefswriter]
-# list serials simplefswriter notice
-serials=1900204522
-# measurement vars simplefswriter should write to filesystem (only from smas with serial in serials)
-values=pconsume psupply qsupply ssupply
+MQTT Broker: An active MQTT broker (e.g., Mosquitto).
 
-[FEATURE-sample]
-nothing=here
-
-```
-
-## Routing
-maybe you have to add a route (example: on hosts with more than one interface) <br>
-```
-sudo ip route add 224.0.0.0/4 dev interfacename
-```
-
-## Install / Copy (tested on Raspbian 9.1)
-```
-sudo apt install git
-sudo apt install python3 cl-py-configparser
-sudo mkdir /opt/smaemd/
-sudo mkdir /etc/smaemd/
-sudo useradd -c "smaemd-user" -d /opt/smaemd -M -N -r -s /usr/sbin/nologin smaemd
-cd /opt/smaemd/
-sudo git clone https://github.com/datenschuft/SMA-EM.git .
-sudo cp systemd-settings /etc/systemd/system/smaemd.service
-```
-
-Create a /etc/smaemd/config file
-```
-sudo cp /opt/smaemd/config.sample /etc/smaemd/config
-```
-Edit the /etc/smaemd/config file and customize it to suit your needs (e.g. set SMA energy meter serial number, IP address, enable features)
-```
-sudo nano /etc/smaemd/config
-```
-
-Update systemd
-```
-sudo systemctl daemon-reload
-sudo systemctl enable smaemd.service
-sudo systemctl start smaemd.service
-```
-feel lucky and read /run/shm/em-<serial>-<value>
-
-
-
-## Testing
-sma-em-capture-package - trys to capture a SMA-EM or SMA-homemanager Datagram and display hex and ascii package-info and all recogniced measurement values.
-Cloud be helpful on package/software changes.
+SMA Energy Meter or Home Manager 2.0 connected to the local network.

@@ -1,3 +1,5 @@
+This software is based on Datenschuft's SMA EM Decoder. The speedwiredecoder libary is used to decode the SMA datagrams.
+
 SMA-EM-Daemon contributors
 ============================================
 

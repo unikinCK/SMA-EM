@@ -15,6 +15,7 @@ WORKDIR /app
 COPY requirements.txt .
 COPY sma2mqtt.py .
 COPY speedwiredecoder.py .
+COPY haautodiscover.py .
 
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
