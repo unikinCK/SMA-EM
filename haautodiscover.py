@@ -1,12 +1,15 @@
 import json
 import paho.mqtt.publish as publish
-
+import os
 # Input file path
 input_json_file = "sampledata.json"
 
 # MQTT broker configuration
-MQTT_BROKER = "192.168.0.180"  # Replace with your MQTT broker IP
-MQTT_PORT = 1883
+MQTT_BROKER = os.getenv("MQTT_BROKER", "192.168.0.180")  # Default to "127.0.0.1"
+MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))           # Default to 1883
+#MQTT_USERNAME = os.getenv("MQTT_USERNAME", "your_username")  # Default to "your_username"
+#MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "your_password")  # Default to "your_password"
+
 DISCOVERY_PREFIX = "homeassistant"
 DEVICE_NAME = "SMA Energy Meter"
 MANUFACTURER = "SMA"
