@@ -18,3 +18,4 @@ This application decodes SMA Energy Meter data and publishes it to an MQTT broke
   - json
 - MQTT Broker: An active MQTT broker (e.g., Mosquitto).
 - SMA Energy Meter or Home Manager 2.0 connected to the local network.
+- Docker to be configured to pass Multicast Messages
