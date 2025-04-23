@@ -3,6 +3,9 @@
  * by david-m-m 2019-Mar-17
  * by datenschuft 2020-Jan-04
  *
+ *Revision:
+    • 2025‑04‑23  Fix: read all *actual* values as signed INT32 so that negative
+      currents/powers (Einspeisung) are preserved.
  *  this software is released under GNU General Public License, version 2.
  *  This program is free software;
  *  you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -119,7 +122,8 @@ def decode_speedwire(datagram):
         # decode values
         # actual values
         if datatype=='actual':
-          value=int.from_bytes( datagram[position+4:position+8], byteorder='big' )
+          raw = datagram[position + 4:position + 8]
+          value = int.from_bytes(raw, byteorder="big", signed=True)
           position+=8
           if measurement in sma_channels.keys():
             emparts[sma_channels[measurement][0]]=value/sma_units[sma_channels[measurement][1]]
