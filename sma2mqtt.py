@@ -55,25 +55,6 @@ sma_units = {
     "Hz": 1000,
 }
 
-# Map of all defined SMA channels
-sma_channels = {
-    # ... channel definitions (same as provided earlier) ...
-}
-
-def decode_OBIS(obis):
-    measurement = int.from_bytes(obis[0:2], byteorder='big')
-    raw_type = int.from_bytes(obis[2:3], byteorder='big')
-    if raw_type == 4:
-        datatype = 'actual'
-    elif raw_type == 8:
-        datatype = 'counter'
-    elif raw_type == 0 and measurement == 36864:
-        datatype = 'version'
-    else:
-        datatype = 'unknown'
-        print(f"Unknown datatype: measurement {measurement} datatype {datatype} raw_type {raw_type}")
-    return measurement, datatype
-
 def send_to_mqtt(data):
     try:
         mqtt_client.publish(MQTT_TOPIC, json.dumps(data))
